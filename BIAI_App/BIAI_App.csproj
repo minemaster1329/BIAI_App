@@ -23,5 +23,9 @@
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="TensorFlowSharp" Version="1.15.1" />
   </ItemGroup>
-
+  <ItemGroup>
+    <None Include="model.onnx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+</ItemGroup>
 </Project>

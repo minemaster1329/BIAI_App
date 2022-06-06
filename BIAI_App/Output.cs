@@ -8,7 +8,7 @@ namespace BIAI_App
     class Output
     {
         [VectorType(15)]
-        [ColumnName("dense_9")]
+        [ColumnName("dense_1")]
         public float[] Data { get; set; }
     }
 }
