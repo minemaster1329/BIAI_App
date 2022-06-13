@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BIAI_App"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="400">
+        Title="MainWindow" Height="500" Width="400" ResizeMode="CanMinimize">
     <Window.Resources>
         <local:MainWindowViewModel x:Key="MainWindowViewModel"/>
         <local:ImagePathToImageConverter x:Key="ImagePathToImageConverter"/>
+        <local:PlantDiseaseNameToTextColorValueConverter x:Key="DiseaseNameToTextColorValueConverter"/>
     </Window.Resources>
     <Grid DataContext="{StaticResource MainWindowViewModel}">
         <Grid.ColumnDefinitions>
@@ -17,11 +18,12 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="200"/>
             <RowDefinition Height="40"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -31,6 +33,11 @@
         <Image Margin="10" Grid.Row="3" Grid.ColumnSpan="3" Source="{Binding ImagePath, Converter={StaticResource ImagePathToImageConverter}}"/>
         <Button Content="Analyze Image" Grid.Row="4" Grid.ColumnSpan="3" Margin="10,10,10,10" Command="{Binding AnalyzeImageCommand}"/>
         <Label Content="Diagnosis" Grid.Row="5" Margin="10,10,10,10"/>
-        <Label Grid.Column="1" Content="{Binding ImageClassifiedLabel}" Margin="10,10,10,10" Grid.Row="5" Grid.ColumnSpan="2"/>
+        <Label Grid.Column="1" Content="{Binding ImageClassifiedLabel}" Margin="10,10,10,10" Grid.Row="5" Grid.ColumnSpan="2" Foreground="{Binding ImageClassifiedLabel, Converter={StaticResource DiseaseNameToTextColorValueConverter}}"/>
+        <Button Content="Invalid feedback" Grid.Row="6" Grid.ColumnSpan="3" Margin="10,10,10,10" Command="{Binding InvalidFeedbackCommand}" IsEnabled="{Binding Analyzed}"/>
+        <Menu Grid.ColumnSpan="3">
+            <MenuItem Header="Options">
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>

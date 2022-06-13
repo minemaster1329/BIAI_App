@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -15,22 +16,23 @@ namespace BIAI_App
         private void SelectPathCommandExecute(object parameter)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
+            openFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
                 ImagePath = openFileDialog.FileName;
+                Analyzed = false;
             }
         }
 
         private void AnalyzeImageCommandExecute(object parameter)
         {
-            float[] inputData = new float[_imageWidth * _imageHeight * 3];
+            float[] inputData = new float[ImageWidth * ImageHeight * 3];
             try
             {
                 Image image = Image.FromFile(ImagePath);
-                Bitmap newImage = new Bitmap(_imageWidth, _imageHeight);
+                Bitmap newImage = new Bitmap(ImageWidth, ImageHeight);
                 newImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-                Rectangle rect = new Rectangle(0, 0, _imageWidth, _imageHeight);
+                Rectangle rect = new Rectangle(0, 0, ImageWidth, ImageHeight);
 
                 using (var graphics = Graphics.FromImage(newImage))
                 {
@@ -65,10 +67,24 @@ namespace BIAI_App
                 float[] outputArr = output.Single().Data;
                 int labelIndex = outputArr.IndexOfMax();
                 ImageClassifiedLabel = _labels[labelIndex];
+                Analyzed = true;
             }
             catch (Exception e)
             {
+                Analyzed = false;
                 MessageBox.Show(e.Message);
+            }
+        }
+
+        private void InvalidFeedbackCommandExecute(object parameter)
+        {
+            if (!Analyzed) return;
+            LabelSelectDialogBox labelSelectDialogBox = new LabelSelectDialogBox();
+            bool? b = labelSelectDialogBox.ShowDialog();
+            if (b == true)
+            {
+                FeedbackDatabaseSingleton.Instance.AddNewImage(ImagePath, _labels[labelSelectDialogBox.SelectedIndex]);
+                Analyzed = false;
             }
         }
     }

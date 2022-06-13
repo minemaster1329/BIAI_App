@@ -13,15 +13,16 @@ namespace BIAI_App
 {
     partial class MainWindowViewModel : INotifyPropertyChanged
     {
-        string _modelPath = @"model.onnx";
+        private const string ModelPath = @"model.onnx";
 
-        string[] _inputColumnNames = new[] { "sequential_input" };
-        string[] _outputColumnNames = new[] { "dense_1" };
+        private readonly string[] _inputColumnNames = { "sequential_input" };
+        private readonly string[] _outputColumnNames = { "dense_1" };
 
-        private const int _imageWidth = 224;
-        private const int _imageHeight = 224;
+        private const int ImageWidth = 224;
+        private const int ImageHeight = 224;
+        private bool _analyzed = false;
 
-        private string[] _labels =
+        private readonly string[] _labels =
         {
             "Corn___Common_Rust",
             "Corn___Gray_Leaf_Spot",
@@ -48,13 +49,15 @@ namespace BIAI_App
         public MainWindowViewModel()
         {
             _mlContext = new MLContext();
-            _pipeline = _mlContext.Transforms.ApplyOnnxModel(_outputColumnNames, _inputColumnNames, _modelPath);
+            _pipeline = _mlContext.Transforms.ApplyOnnxModel(_outputColumnNames, _inputColumnNames, ModelPath);
             SelectPathCommand = new RelaySyncCommand(SelectPathCommandExecute);
             AnalyzeImageCommand = new RelaySyncCommand(AnalyzeImageCommandExecute);
+            InvalidFeedbackCommand = new RelaySyncCommand(InvalidFeedbackCommandExecute);
         }
 
         public RelaySyncCommand SelectPathCommand { get; }
         public RelaySyncCommand AnalyzeImageCommand { get; }
+        public RelaySyncCommand InvalidFeedbackCommand { get; }
         public string ImagePath
         {
             get => _imagePath;
@@ -71,6 +74,16 @@ namespace BIAI_App
             set
             {
                 _imageClassifiedLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Analyzed
+        {
+            get => _analyzed;
+            set
+            {
+                _analyzed = value;
                 OnPropertyChanged();
             }
         }

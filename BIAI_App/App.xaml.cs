@@ -13,5 +13,16 @@ namespace BIAI_App
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            FeedbackDatabaseSingleton.Instance.Initialize();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            FeedbackDatabaseSingleton.Instance.Save();
+        }
     }
 }
